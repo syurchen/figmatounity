@@ -7,7 +7,13 @@ class Api {
 	const urlMain = 'https://api.figma.com/v1/';
 
 	const methods = array(
-		'getFile' => 'files'
+		'getFile' => [
+			'method' => 'files',
+		],
+		'getNodes' => [
+			'method' => 'files',
+			'postfix' => 'nodes'
+		],
 	);
 
 	private $apiKey;
@@ -16,8 +22,10 @@ class Api {
 		$this->apiKey = $apiKey;
 	}
 
-	private function genUrl(string $method, string $key, string $title = ''): string {
-		$url = self::urlMain . "{$method}/{$key}";
+	private function genUrl(array $method, string $key, string $title = ''): string {
+		$url = self::urlMain . "{$method['method']}/{$key}/";
+		if (isset($method['postfix']) && $method['postfix'])
+			$url .= $method['postfix'];
 		if ($title)
 			$url .= "/{$title}";
 		return $url;
@@ -39,7 +47,6 @@ class Api {
 		$url = $this->genUrl(self::methods['getFile'], $key);
 		$data = array();
 		$res = $this->queue($url, $data);
-		//file_put_contents('../../tests/file.json', $res);
 		try {
 			$res = json_decode($res, true);
 		} catch(Exception $e){
@@ -47,4 +54,17 @@ class Api {
 		}
 		return $res;
 	}
+
+	public function getFileNodesAsArray(string $key): array {
+		$url = $this->genUrl(self::methods['getNodes'], $key);
+		$data = array();
+		$res = $this->queue($url, $data);
+		try {
+			$res = json_decode($res, true);
+		} catch(Exception $e){
+			return array();
+		}
+		return $res;
+	}
+
 }

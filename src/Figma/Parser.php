@@ -6,19 +6,14 @@ use Tree\Node\Node;
 
 class Parser {
 
-	static function parse (string $string): FiPage{
+	static function parse (array $array): FiPage{
 
-		$array = json_decode($string, true);
 		$name = $array['name'];
 		$version = $array['version'];
 		$styles = $array['styles'];
 
 		$document = $array['document'];
 		$docNode = self::parseNode($document);
-		echo "\n\n{$docNode->getSize()}\n\n";
-		echo "\n\n{$docNode->getHeight()}\n\n";
-		echo "\n\n" . count($docNode->getChildren()) . "\n\n";
-
 		$components = [];
 
 		return new FiPage($name, $components, $docNode, $styles, $version);

@@ -12,15 +12,20 @@ class FigmaApiTest extends TestCase
     public function testApi()
     {
         $this->markTestSkipped('must be revisited.');
-
-        $key = '8729-262a006c-3cee-4fb4-a209-0f6b2936cd43';
+	$key = '8729-262a006c-3cee-4fb4-a209-0f6b2936cd43';
+	$fileKey = 'HPqtAwfAl0gAvc5IQlb411';
         $api = new Api($key);
 
-        $result = $api->getFileAsArray('HPqtAwfAl0gAvc5IQlb411');
-
+        $result = $api->getFileAsArray($fileKey);
         $this->assertTrue(is_array($result));
         file_put_contents('/tmp/file.json', json_encode($result));
-        file_put_contents('/tmp/file.array', print_r($result, true));
+	$this->assertFalse(empty($result));
+/*
+        $result = $api->getFileNodesAsArray($fileKey);
+
+        $this->assertTrue(is_array($result));
+        file_put_contents('/tmp/nodes.json', json_encode($result));
+ */
         $this->assertFalse(empty($result));
     }
 
@@ -28,13 +33,12 @@ class FigmaApiTest extends TestCase
     public function testParser()
     {
         $array = json_decode(file_get_contents('/tmp/file.json'), true);
-        $string = file_get_contents('/tmp/file.json');
-        print_r(array_keys($array['document']));
 //        print_r($array['name']);
-//	print_r($array['version']);
+        //	print_r($array['version']);
 
-        $page = Parser::parse($string);
+        $page = Parser::parse($array);
         $this->assertTrue($page instanceof FiPage);
+        $this->assertTrue(!empty($page->getScenes()));
         //print_r(array_keys($array['document']['children'][0]['children'][0]['children'][0]));
     }
 }
